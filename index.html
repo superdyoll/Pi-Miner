@@ -1,0 +1,88 @@
+<html>
+<head>
+<title>&pi;-ning</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<style>
+.wordwrap { 
+   white-space: pre-wrap;      /* CSS3 */   
+   white-space: -moz-pre-wrap; /* Firefox */    
+   white-space: -pre-wrap;     /* Opera <7 */   
+   white-space: -o-pre-wrap;   /* Opera 7 */    
+   word-wrap: break-word;      /* IE */
+}
+
+#digits{
+   text-align: center;
+}
+
+.centered{
+   text-align: center;
+}
+</style>
+<script>
+function getDigits(x) {
+var xhr = new XMLHttpRequest();
+xhr.open("GET", "https://apidigits.apispark.net/v1/digits/" + x, false);
+xhr.setRequestHeader('Content-Type', 'text/xml');
+xhr.send();
+
+console.log(xhr.status);
+console.log(xhr.statusText);
+console.log(xhr.response);
+jsonDocument = $.parseJSON(xhr.response);
+$json = $( jsonDocument );
+$digits = $json[0].content;
+var chars = $digits.split('');
+var ints = [];
+chars.forEach(function(entry) {
+	ints.push(parseInt(entry));
+});
+
+return ints;
+}
+
+function checkAchievements(digitIdx){
+	$('#digits').text(digitIdx);
+}
+</script>
+</head>
+<body>
+<div class="container">
+<div class="row">
+<div class="col-md-4">
+<h4 class="centered">Digits mined</h4>
+<h2 id="digits">0</h2>
+</div>
+<div class="col-md-4">
+<h1 class="centered">&pi;-ning</h1>
+<p class="centered">(&pi; mining)</p>
+</div>
+</div>
+<div class="row">
+<div class="col-md-12" class="wordwrap">
+<p id="pi" class="wordwrap">&pi; = 3.</p>
+</div>
+</div>
+</div>
+<script>
+(function outputTextLoop(queue, index, digitIdx){
+	if (queue.length<50){
+		queue = queue.concat(getDigits(index));
+		index ++;
+	}
+	$("#pi").append(queue.shift());
+	checkAchievements(digitIdx);
+	digitIdx ++;
+	setTimeout((function(){ outputTextLoop(queue, index, digitIdx)}), 500);
+})([], 0, 0);
+</script>
+</body>
+</html>
