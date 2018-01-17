@@ -4,11 +4,16 @@
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+<link rel="stylesheet" href="/css/snackbar.css" />
+
 <!-- jQuery library -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <!-- Latest compiled JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!-- FA Pro -->
+<script defer src="/fontawesome/js/fontawesome-all.js"></script>
 
 <style>
 .wordwrap { 
@@ -28,29 +33,44 @@
 }
 </style>
 <script>
-function getDigits(x) {
-var xhr = new XMLHttpRequest();
-xhr.open("GET", "https://apidigits.apispark.net/v1/digits/" + x, false);
-xhr.setRequestHeader('Content-Type', 'text/xml');
-xhr.send();
-
-console.log(xhr.status);
-console.log(xhr.statusText);
-console.log(xhr.response);
-jsonDocument = $.parseJSON(xhr.response);
-$json = $( jsonDocument );
-$digits = $json[0].content;
-var chars = $digits.split('');
-var ints = [];
-chars.forEach(function(entry) {
-	ints.push(parseInt(entry));
+// Enable tooltips
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
 });
 
-return ints;
+
+function getDigits(x) {
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", "https://apidigits.apispark.net/v1/digits/" + x, false);
+	xhr.setRequestHeader('Content-Type', 'text/xml');
+	xhr.send();
+
+	console.log(xhr.status);
+	console.log(xhr.statusText);
+	console.log(xhr.response);
+	jsonDocument = $.parseJSON(xhr.response);
+	$json = $( jsonDocument );
+	$digits = $json[0].content;
+	var chars = $digits.split('');
+	var ints = [];
+	chars.forEach(function(entry) {
+		ints.push(parseInt(entry));
+	});
+
+	return ints;
 }
 
 function checkAchievements(digitIdx){
 	$('#digits').text(digitIdx);
+	switch(digitIdx) {
+		case 3:
+			addAchievement(0, "fal fa-calculator", "22/7");
+			break;
+	}
+}
+
+function addAchievement(achievmentId, faSymbol, text){
+	$('#achievements').append("<i class='" + faSymbol + "' data-toggle='tooltip' title='" +  text + "'>");
 }
 </script>
 </head>
@@ -64,6 +84,11 @@ function checkAchievements(digitIdx){
 <div class="col-md-4">
 <h1 class="centered">&pi;-ning</h1>
 <p class="centered">(&pi; mining)</p>
+</div>
+<div class="col-md-4">
+	<h4 class="centered">Achievements</h4>
+	<div id="achievements">
+	</div>
 </div>
 </div>
 <div class="row">
@@ -79,8 +104,8 @@ function checkAchievements(digitIdx){
 		index ++;
 	}
 	$("#pi").append(queue.shift());
-	checkAchievements(digitIdx);
 	digitIdx ++;
+	checkAchievements(digitIdx);
 	setTimeout((function(){ outputTextLoop(queue, index, digitIdx)}), 500);
 })([], 0, 0);
 </script>
